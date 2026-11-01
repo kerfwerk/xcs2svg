@@ -103,7 +103,7 @@ _PATH_CHARS = re.compile(r"[MmLlHhVvCcSsQqTtAaZz0-9eE.,+\-\s]*")
 _PATH_SPACE = re.compile(r"[ \t\r\n,]*")
 _NUMBER = re.compile(r"[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?")
 _DATA_URI = re.compile(r"data:image/(png|jpe?g|gif|bmp);base64,([A-Za-z0-9+/=\s]+)", re.IGNORECASE)
-_XML_INVALID = re.compile("[^\t\n\r\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]")
+_XML_INVALID = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\ufffe\uffff]")  # not allowed in XML 1.0
 _FILE_UNSAFE = re.compile(r"[^\w.\- ]+")
 _FONT_UNSAFE = re.compile(r"[^\w \-]+")
 
