@@ -1,0 +1,47 @@
+# Docker Compose file; "docker compose up -d --build" and "podman compose up -d --build" both use it.
+services:
+  xcs2svg:
+    build: .
+    image: xcs2svg:latest
+    # Only reachable from this computer. To use it from other devices in the
+    # local network, change this to "8080:8080" (and allow the port in the firewall).
+    # Note: "An LightBurn senden" needs http://localhost or HTTPS in the browser (WebCrypto),
+    # so from another device it only works behind an HTTPS reverse proxy.
+    ports:
+      - "127.0.0.1:8080:8080"
+    # Lets the container reach LightBurn on the host PC under both names, with Docker and Podman.
+    # "host-gateway" is the host's address as seen from the container.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "host.containers.internal:host-gateway"
+    environment:
+      MAX_UPLOAD_MB: "25"
+      # Simultaneous conversions. A 25 MB file (or ZIP) can need up to ~350 MB RAM while it is
+      # converted, so keep MAX_PARALLEL x 350 MB (+ uploads in flight) below mem_limit.
+      MAX_PARALLEL: "2"
+      MAX_CONNECTIONS: "32"  # open connections (one thread each); keep well below pids_limit
+      # LightBurn targets the browser may choose from (comma-separated). Requests can only go
+      # to these hosts/ports; add e.g. the PC's LAN IP here if the host names do not work.
+      LIGHTBURN_HOSTS: "host.containers.internal,host.docker.internal"
+      LIGHTBURN_PORTS: "19520"  # LightBurn's fixed API port (MillMage: 19521)
+      # Host names the app is opened under besides localhost/127.0.0.1/[::1] (DNS-rebinding guard for
+      # the LightBurn endpoints), e.g. the domain of an HTTPS reverse proxy: PUBLIC_HOSTS: "laser.example"
+      # The server is stateless: the LightBurn key stays in the browser, nothing is stored here.
+    user: "65532:65532"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    # Same check as in the Dockerfile; repeated here because Podman ignores
+    # HEALTHCHECK in images built in the default OCI format.
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+    mem_limit: 1g
+    pids_limit: 64
+    restart: unless-stopped

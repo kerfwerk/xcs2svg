@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Einstellungen · XCS zu SVG</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="lightburn.js" defer></script>
+  <script src="settings.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <nav class="topnav"><a href="./">← Zurück zur Umwandlung</a></nav>
+      <h1>LightBurn-Anbindung</h1>
+      <p>Fertige SVGs direkt an LightBurn 2.2 schicken. Der Schlüssel bleibt nur in diesem Browser – der Server speichert nichts.</p>
+    </header>
+
+    <p class="notice notice-error" id="unsupported" hidden></p>
+
+    <form class="panel settings" id="form" novalidate>
+      <div class="field">
+        <label for="host">Host</label>
+        <select id="host" name="host"></select>
+        <p class="field-hint">Podman: <code>host.containers.internal</code>, Docker: <code>host.docker.internal</code>. Weitere Hosts über <code>LIGHTBURN_HOSTS</code> in <code>compose.yaml</code>.</p>
+      </div>
+
+      <div class="field">
+        <label for="port">Port</label>
+        <select id="port" name="port"></select>
+      </div>
+
+      <div class="field">
+        <label for="mode">Modus</label>
+        <select id="mode" name="mode">
+          <option value="upload">Ins aktuelle Projekt importieren</option>
+          <option value="open">Projekt ersetzen</option>
+        </select>
+      </div>
+
+      <div class="check-field">
+        <label class="check">
+          <input type="checkbox" id="group" name="group" aria-describedby="group-hint">
+          <span>Immer gruppiert importieren</span>
+        </label>
+        <p class="field-hint" id="group-hint">Aus: Es gilt die Gruppier-Einstellung von LightBurn. Nur beim Importieren ins aktuelle Projekt.</p>
+      </div>
+
+      <div class="field">
+        <label for="secret">Schlüssel</label>
+        <input type="password" id="secret" name="secret" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Schlüssel aus LightBurn einfügen">
+        <p class="field-hint" id="key-state">Kein Schlüssel gespeichert.</p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="button button-primary" id="save">Speichern</button>
+        <button type="button" class="button" id="test">Verbindung testen</button>
+        <button type="button" class="button button-danger" id="forget">Schlüssel löschen</button>
+      </div>
+      <p class="form-status" id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <footer class="notes">
+      <h2>Einrichtung</h2>
+      <ol>
+        <li>In <strong>LightBurn 2.2</strong>: <em>Einstellungen &gt; Erweiterungen (Extensions)</em> und <strong>„Allow API Access From Network“</strong> einschalten. Nötig, weil der Container in der Podman-/Docker-VM läuft und nicht direkt auf dem PC.</li>
+        <li>Einmalig koppeln: auf dem PC mit LightBurn <code>tools\lightburn-pair.ps1</code> ausführen und den Dialog in LightBurn innerhalb von 30 Sekunden bestätigen (oder in LightBurn unter <em>Manage API Security</em> einen Eintrag wählen und <em>Show Secret…</em> – er braucht die Berechtigungen <code>state</code> und <code>upload</code>; ohne <code>state</code> schlagen „Verbindung testen“ und die Import-Bestätigung fehl). Den Schlüssel oben eintragen und speichern.</li>
+        <li>Host wählen: Podman <code>host.containers.internal</code>, Docker <code>host.docker.internal</code>. Fragt die Windows-Firewall nach, LightBurn für private Netzwerke erlauben (eingehend TCP-Port 19520).</li>
+        <li>Der Schlüssel bleibt nur in diesem Browser (als nicht auslesbarer WebCrypto-Schlüssel). Der Server speichert nichts; an ihn gehen nur Einmal-Token, die etwa eine Minute gültig sind. Die Einstellung gilt pro Browser und Adresse – <code>localhost:8080</code> und <code>127.0.0.1:8080</code> zählen getrennt.</li>
+      </ol>
+    </footer>
+  </main>
+</body>
+</html>

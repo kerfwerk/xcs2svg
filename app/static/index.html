@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>XCS zu SVG</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="lightburn.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <div class="intro-head">
+        <h1>XCS zu SVG</h1>
+        <a class="nav-link" href="einstellungen">Einstellungen</a>
+      </div>
+      <p>Wandelt Projekte aus xTool Creative Space (<code>.xcs</code>) und xTool Studio (<code>.xs</code>) in SVG-Dateien um – auch direkt als ZIP-Download von Atomm –, die sich in LightBurn in Originalgröße importieren lassen. Die Dateien werden nur im Arbeitsspeicher verarbeitet und nicht gespeichert.</p>
+    </header>
+
+    <section id="drop" class="drop" aria-label="Dateien hochladen">
+      <p class="drop-title">.xcs-, .xs- oder .zip-Dateien hierher ziehen</p>
+      <p class="drop-hint">oder</p>
+      <button type="button" id="pick" class="button button-primary">Dateien auswählen</button>
+      <input type="file" id="file" accept=".xcs,.xs,.zip" multiple hidden>
+      <p class="drop-limit" id="limit">Mehrere Dateien möglich.</p>
+    </section>
+
+    <p class="lb-hint" id="lb-hint" hidden><span id="lb-hint-text"></span> <a href="einstellungen">Einstellungen</a></p>
+
+    <div class="toolbar" id="toolbar" hidden>
+      <p class="summary" id="summary" aria-live="polite"></p>
+      <div class="toolbar-actions">
+        <button type="button" id="clear" class="button">Liste leeren</button>
+        <button type="button" id="send-all" class="button" hidden disabled>Alle an LightBurn senden</button>
+        <button type="button" id="download-all" class="button button-primary" disabled>Alle herunterladen</button>
+      </div>
+    </div>
+
+    <section id="results" class="results" aria-label="Ergebnisse"></section>
+
+    <footer class="notes">
+      <h2>Import in LightBurn</h2>
+      <ol>
+        <li><strong>Datei &gt; Importieren</strong> und die SVG-Datei wählen – oder nach einmaliger Einrichtung unter <a href="einstellungen">Einstellungen</a> direkt <strong>„An LightBurn senden“</strong>.</li>
+        <li>Jede Farbe landet auf einer eigenen LightBurn-Ebene (Schwarz = 00, Blau = 01, Rot = 02 …). Leistung und Geschwindigkeit dort neu einstellen – Lasereinstellungen werden nicht übernommen.</li>
+        <li>Größe in mm kurz nachmessen. Die SVG enthält echte Millimeter-Angaben; stimmt die Größe trotzdem nicht, in den LightBurn-Einstellungen die Optionen für den SVG-Import (automatische Größenerkennung/DPI) prüfen.</li>
+      </ol>
+    </footer>
+  </main>
+
+  <template id="card-template">
+    <article class="card">
+      <header class="card-head">
+        <h2 class="card-title"></h2>
+        <span class="status"></span>
+      </header>
+      <div class="card-body"></div>
+      <ul class="warnings" hidden></ul>
+    </article>
+  </template>
+
+  <template id="svg-template">
+    <div class="svg-item">
+      <figure class="preview"><img alt=""></figure>
+      <div class="svg-row">
+        <div class="svg-meta">
+          <span class="svg-name"></span>
+          <span class="svg-size"></span>
+        </div>
+        <div class="svg-actions">
+          <button type="button" class="button send" hidden>An LightBurn senden</button>
+          <a class="button" download>SVG herunterladen</a>
+        </div>
+      </div>
+      <p class="send-status" role="status" aria-live="polite" hidden></p>
+    </div>
+  </template>
+</body>
+</html>

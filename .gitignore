@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local sample files (third-party designs, never commit them) and conversion output
+tests/fixtures/
+fixtures/
+*.xcs
+*.xs
+*.zip
+*.svg
+!app/static/*.svg
+
+# Secrets and local settings
+.env
+.env.*
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
