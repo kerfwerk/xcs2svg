@@ -1,0 +1,9 @@
+# Weekly check of the digest-pinned base image in the Dockerfile.
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "docker"
